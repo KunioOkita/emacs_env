@@ -97,16 +97,16 @@
 (add-hook 'svn-pre-parse-status-hook 'svn-status-parse-fixup-externals-full-path)
 
 (defun svn-status-parse-fixup-externals-full-path ()
-  "SubVersion 1.17 adds the full path to externals; 
+  "SubVersion 1.17 adds the full path to externals;
   this pre-parse hook fixes it up to look like pre-1.17.
   Allowing psvn to continue as normal"
   (goto-char (point-min))
   (let (( search-string  (file-truename default-directory) ))
     (save-match-data
       (save-excursion
-	(while (re-search-forward search-string (point-max) t)
-	  (replace-match "" nil nil)
-	  )))))
+    (while (re-search-forward search-string (point-max) t)
+      (replace-match "" nil nil)
+      )))))
 (define-key global-map
   "\C-xvn" 'svn-status)
 (define-key global-map
@@ -237,7 +237,7 @@
             (setq nxml-child-indent 2)                  ; タグのインデント幅
             (setq nxml-attribute-indent 4)              ; 属性のインデント幅
             (setq indent-tabs-mode nil)
-            (setq nxml-bind-meta-tab-to-complete-flag t) 
+            (setq nxml-bind-meta-tab-to-complete-flag t)
             (setq nxml-slash-auto-complete-flag t)      ; </の入力で閉じタグを補完する
             (setq nxml-sexp-element-flag t)             ; C-M-kで下位を含む要素全体をkillする
             (setq nxml-char-ref-display-glyph-flag nil) ; グリフは非表示
@@ -254,13 +254,13 @@
   ;; インストールディレクトリを設定する
   ;; 初期値は ~/.emacs.d/auto-install/
   (setq auto-install-directory "~/.emacs.d/elisp")
-  
+
   ;; EmacsWiki に登録されている elisp の名前を取得する
   ;; (auto-install-update-emacswiki-package-name t)
-  
+
   ;; 必要であればプロキシの設定を行う
   ;;  (setq url-proxy-services '(("http" . "localhost:8080")))
-  
+
   ;; install-elisp の関数を利用可能にする
   (auto-install-compatibility-setup)
   )
@@ -279,9 +279,9 @@
 (when (require 'yasnippet nil t)
   (yas--initialize)
   (setq yas-snippet-dirs
-	'("~/.emacs.d/snippets" ;; 作成するスニペットはここに入る
-	  "~/.emacs.d/elisp/yasnippet/snippets" ;; 最初から入っていたスニペット(省略可能)
-	  ))
+    '("~/.emacs.d/snippets" ;; 作成するスニペットはここに入る
+      "~/.emacs.d/elisp/yasnippet/snippets" ;; 最初から入っていたスニペット(省略可能)
+      ))
   ;;  (yas/load-directory "~/.emacs.d/elisp/yasnippet/snippets")
   ;;  (yas/load-directory "~/.emacs.d/elisp/yasnippet/extras/imported")
   (yas/global-mode 1)
@@ -314,90 +314,6 @@
 ;;--------------------
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.\\(js\\|json\\)$" . js2-mode))
-;; (setq ac-modes (append '(js2-mode)))
-;; (add-hook 'js2-mode-hook 
-;; 	  #'(lambda () 
-;; 	      (add-to-list 'ac-source-js2-mode)
-;; 	      (require 'js)
-;; 	      (setq js-indent-level 4
-;; 		    js-expr-indent-offset 4
-;; 		    indent-tabs-mode nil)
-;; 	      (set (make-local-variable 'indent-line-function) 'js-indent-line)))
-
-;; (autoload 'js-mode "js")
-;; (defun my-js2-indent-function ()
-;;   (interactive)
-;;   (save-restriction
-;;     (widen)
-;;     (let* ((inhibit-point-motion-hooks t)
-;;            (parse-status (save-excursion (syntax-ppss (point-at-bol))))
-;;            (offset (- (current-column) (current-indentation)))
-;;            (indentation (js--proper-indentation parse-status))
-;;            node)
-;;       (save-excursion
-;;         ;; I like to indent case and labels to half of the tab width
-;;         (back-to-indentation)
-;;         (if (looking-at "case\\s-")
-;;             (setq indentation (+ indentation (/ js-indent-level 2))))
-;;         ;; consecutive declarations in a var statement are nice if
-;;         ;; properly aligned, i.e:
-;;         ;; var foo = "bar",
-;;         ;;     bar = "foo";
-;;         (setq node (js2-node-at-point))
-;;         (when (and node
-;;                    (= js2-NAME (js2-node-type node))
-;;                    (= js2-VAR (js2-node-type (js2-node-parent node))))
-;;           (setq indentation (+ 4 indentation))))
-;;       (indent-line-to indentation)
-;;       (when (> offset 0) (forward-char offset)))))
-
-;; (defun my-indent-sexp ()
-;;   (interactive)
-;;   (save-restriction
-;;     (save-excursion
-;;       (widen)
-;;       (let* ((inhibit-point-motion-hooks t)
-;;              (parse-status (syntax-ppss (point)))
-;;              (beg (nth 1 parse-status))
-;;              (end-marker (make-marker))
-;;              (end (progn (goto-char beg) (forward-list) (point)))
-;;              (ovl (make-overlay beg end)))
-;;         (set-marker end-marker end)
-;;         (overlay-put ovl 'face 'highlight)
-;;         (goto-char beg)
-;;         (while (< (point) (marker-position end-marker))
-;;           ;; don't reindent blank lines so we don't set the "buffer
-;;           ;; modified" property for nothing
-;;           (beginning-of-line)
-;;           (unless (looking-at "\\s-*$")
-;;             (indent-according-to-mode))
-;;           (forward-line))
-;;         (run-with-timer 0.5 nil '(lambda(ovl)
-;;                                    (delete-overlay ovl)) ovl)))))
-;; (defun my-js2-mode-hook ()
-;;   (require 'js)
-;;   (setq js-indent-level 4
-;;         indent-tabs-mode nil
-;;         c-basic-offset 2)
-;;   (c-toggle-auto-state 0)
-;;   (c-toggle-hungry-state 1)
-;;   (set (make-local-variable 'indent-line-function) 'my-js2-indent-function)
-;;   (define-key js2-mode-map [(meta control \;)]
-;;     '(lambda()
-;;        (interactive)
-;;        (insert "/* -----[ ")
-;;        (save-excursion
-;;          (insert " ]----- */"))
-;;        ))
-;;   (define-key js2-mode-map [(return)] 'newline-and-indent)
-;;   (define-key js2-mode-map [(backspace)] 'c-electric-backspace)
-;;   (define-key js2-mode-map [(control d)] 'c-electric-delete-forward)
-;;   (define-key js2-mode-map [(control meta q)] 'my-indent-sexp)
-;;   (if (featurep 'js2-highlight-vars)
-;;       (js2-highlight-vars-mode))
-;;   (message "My JS2 hook"))
-
-;; (add-hook 'js2-mode-hook 'my-js2-mode-hook)
 
 ;;--------------------
 ;; php-mode

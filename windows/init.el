@@ -720,54 +720,18 @@
   (setq web-mode-asp-offset    2))
 (add-hook 'web-mode-hook 'web-mode-hook)
 
-;; nxml
-;; (setq auto-mode-alist
-;;       (append '(
-;;                 ("\\.\\(html\\|xhtml\\|shtml\\|tpl\\)\\'" . nxml-mode)
-;;                 ("\\.php\\'" . php-mode)
-;;                 )
-;;               auto-mode-alist))
-
-;; (load "rng-auto.el" 't)
-;; (add-hook 'nxml-mode-hook
-;;           (lambda ()
-;;             ;; 更新タイムスタンプの自動挿入
-;;             (setq time-stamp-line-limit 10000)
-;;             (if (not (memq 'time-stamp write-file-hooks))
-;;                 (setq write-file-hooks
-;;                       (cons 'time-stamp write-file-hooks)))
-;;             (setq time-stamp-format "%3a %3b %02d %02H:%02M:%02S %:y %Z")
-;;             (setq time-stamp-start "Last modified:[ \t]")
-;;             (setq time-stamp-end "$")
-;;             ;;
-;;             (setq auto-fill-mode -1)
-;;             (setq nxml-slash-auto-complete-flag t)      ; スラッシュの入力で終了タグを自動補完
-;;             (setq nxml-child-indent 2)                  ; タグのインデント幅
-;;             (setq nxml-attribute-indent 4)              ; 属性のインデント幅
-;;             (setq indent-tabs-mode nil)
-;;             (setq nxml-bind-meta-tab-to-complete-flag t) 
-;;             (setq nxml-slash-auto-complete-flag t)      ; </の入力で閉じタグを補完する
-;;             (setq nxml-sexp-element-flag t)             ; C-M-kで下位を含む要素全体をkillする
-;;             (setq nxml-char-ref-display-glyph-flag nil) ; グリフは非表示
-;;             (setq tab-width 4)))  ; /(終了タグ)
-
-;; (add-to-list 'load-path "~/.emacs.d/elisp/html5-el")
-;; (eval-after-load "rng-loc"
-;;   '(add-to-list 'rng-schema-locating-files "~/.emacs.d/elisp/html5-el/schemas.xml"))
-;; (require 'whattf-dt)
-
 ;; auto install
 (when (require 'auto-install nil t)
   ;; インストールディレクトリを設定する
   ;; 初期値は ~/.emacs.d/auto-install/
   (setq auto-install-directory "~/.emacs.d/elisp")
-  
+
   ;; EmacsWiki に登録されている elisp の名前を取得する
   ;; (auto-install-update-emacswiki-package-name t)
-  
+
   ;; 必要であればプロキシの設定を行う
   ;;  (setq url-proxy-services '(("http" . "localhost:8080")))
-  
+
   ;; install-elisp の関数を利用可能にする
   (auto-install-compatibility-setup)
   )
@@ -784,7 +748,7 @@
   (setq yas-snippet-dirs
         '("~/.emacs.d/snippets" ;; 作成するスニペットはここに入る
           "~/.emacs.d/elisp/yasnippet/snippets" ;; 最初から入っていたスニペット(省略可能)
-          ))  
+          ))
   ;;  (yas/load-directory "~/.emacs.d/elisp/yasnippet/snippets")
   ;;  (yas/load-directory "~/.emacs.d/elisp/yasnippet/extras/imported")
   (yas/global-mode 1)
@@ -818,23 +782,12 @@
 (add-to-list 'auto-mode-alist '("\\.\\(js\\|json\\)$" . js2-mode))
 (setq-default js2-basic-offset 2)
 (setq ac-modes (append '(js2-mode)))
-;; (add-hook 'js2-mode-hook
-;;           #'(lambda ()
-;;               (require 'js)
-;;               (setq js-indent-level 2
-;;                     js-expr-indent-offset 2
-;;                     indent-tabs-mode nil)
-;;               (set (make-local-variable 'indent-line-function) 'js-indent-line)))
 
 ;; php-mode
 ;;(require 'php-mode)
 (autoload 'php-mode "php-mode")
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
-;; (setq auto-mode-alist
-;;      (cons '("\\.inc\\'" . php-mode) auto-mode-alist))
-;; (setq auto-mode-alist
-;;       (cons '("\\.php\\'" . php-mode) auto-mode-alist))
 
 ;; subversion
 (require 'psvn)
