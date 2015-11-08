@@ -1,4 +1,13 @@
 ;;-----------------------------------------------------------
+;; package.el
+;;-----------------------------------------------------------
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages") t)
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages") t)
+(package-initialize)
+
+;;-----------------------------------------------------------
 ;; load-path
 ;;-----------------------------------------------------------
 ;;(setq load-path (cons (expand-file-name "~/.emacs.d/elisp") load-path))
@@ -9,24 +18,38 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/auto-complete")
 (add-to-list 'load-path "~/.emacs.d/elisp/emacs-w3m/share/emacs/site-lisp/w3m")
 
+(let ((default-directory (expand-file-name "~/.emacs.d/elpa")))
+  (add-to-list 'load-path default-directory)
+  (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
+      (normal-top-level-add-subdirs-to-load-path)))
 ;;-----------------------------------------------------------
 ;; System Settings
 ;;-----------------------------------------------------------
-;;(set-keyboard-coding-system 'cp932)
  (set-default-coding-systems 'utf-8)
  (prefer-coding-system 'utf-8)
  (set-terminal-coding-system 'utf-8)
  (set-file-name-coding-system 'utf-8)
  (setq default-process-coding-system '(utf-8 . utf-8))
-;;(set-default-coding-systems 'euc-jp-unix)
-;;(prefer-coding-system 'euc-jp-unix)
-;;(set-terminal-coding-system 'euc-jp-unix)
-;;(set-file-name-coding-system 'euc-jp-unix)
-;;(setq default-process-coding-system '(euc-jp-unix . euc-jp-unix))
+;; font
+(add-to-list 'default-frame-alist '(font . "ricty-10"))
 
 ;;-----------------------------------------------------------
 ;; My Settings
 ;;-----------------------------------------------------------
+
+;; 起動時の画面非表示
+(setq inhibit-startup-message t)
+;; menu
+;; ツールバーを非表示
+(tool-bar-mode -1)
+;; メニューバーを非表示
+(menu-bar-mode -1)
+;; スクロールバーを非表示
+(scroll-bar-mode 0)
+
+
+;; C-h backspace
+(global-set-key "\C-h" 'delete-backward-char)
 
 ;;--------------------
 ;; for cursor speed-up
@@ -97,7 +120,7 @@
 (add-hook 'svn-pre-parse-status-hook 'svn-status-parse-fixup-externals-full-path)
 
 (defun svn-status-parse-fixup-externals-full-path ()
-  "SubVersion 1.17 adds the full path to externals;
+  "SubVersion 1.17 adds the full path to externals; 
   this pre-parse hook fixes it up to look like pre-1.17.
   Allowing psvn to continue as normal"
   (goto-char (point-min))
@@ -111,7 +134,6 @@
   "\C-xvn" 'svn-status)
 (define-key global-map
   "\C-xvk" 'svn-update)
-
 
 ;;--------------------
 ;; その他色々設定
@@ -149,7 +171,9 @@
  ;; If there is more than one, they won't work right.
  '(auto-compression-mode t nil (jka-compr))
  '(blink-cursor-mode nil)
+ '(column-number-mode t)
  '(diff-switches "-u")
+ '(display-time-mode t)
  '(show-paren-mode t))
 
 ;;バックアップファイル作成
@@ -169,6 +193,7 @@
                                       'text-mode
                                       'c-mode
                                       'nxml-mode
+                                      'web-mode
                                       'js2-mode
                                       'c++-mode
                                       'fundamental-mode))))
@@ -213,39 +238,27 @@
 ;;--------------------
 ;; HTML5対応
 ;;--------------------
-(setq auto-mode-alist
-      (append '(
-                ("\\.\\(html\\|xhtml\\|shtml\\|tpl\\)\\'" . nxml-mode)
-                ("\\.php\\'" . php-mode)
-                )
-              auto-mode-alist))
 
-(load "rng-auto.el" 't)
-(add-hook 'nxml-mode-hook
-          (lambda ()
-            ;; 更新タイムスタンプの自動挿入
-            (setq time-stamp-line-limit 10000)
-            (if (not (memq 'time-stamp write-file-hooks))
-                (setq write-file-hooks
-                      (cons 'time-stamp write-file-hooks)))
-            (setq time-stamp-format "%3a %3b %02d %02H:%02M:%02S %:y %Z")
-            (setq time-stamp-start "Last modified:[ \t]")
-            (setq time-stamp-end "$")
-            ;;
-            (setq auto-fill-mode -1)
-            (setq nxml-slash-auto-complete-flag t)      ; スラッシュの入力で終了タグを自動補完
-            (setq nxml-child-indent 2)                  ; タグのインデント幅
-            (setq nxml-attribute-indent 4)              ; 属性のインデント幅
-            (setq indent-tabs-mode nil)
-            (setq nxml-bind-meta-tab-to-complete-flag t)
-            (setq nxml-slash-auto-complete-flag t)      ; </の入力で閉じタグを補完する
-            (setq nxml-sexp-element-flag t)             ; C-M-kで下位を含む要素全体をkillする
-            (setq nxml-char-ref-display-glyph-flag nil) ; グリフは非表示
-            (setq tab-width 4)))  ; /(終了タグ)
+;; web-mode
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.[gj]sp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 
-(eval-after-load "rng-loc"
-  '(add-to-list 'rng-schema-locating-files "~/.emacs.d/elisp/html5-el/schemas.xml"))
-(require 'whattf-dt)
+(defun web-mode-hook ()
+  "Hooks for Web mode."
+  (setq web-mode-html-offset   2)
+  (setq web-mode-css-offset    2)
+  (setq web-mode-script-offset 2)
+  (setq web-mode-php-offset    2)
+  (setq web-mode-java-offset   2)
+  (setq web-mode-asp-offset    2))
+(add-hook 'web-mode-hook 'web-mode-hook)
 
 ;;--------------------
 ;; auto install
@@ -314,6 +327,11 @@
 ;;--------------------
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.\\(js\\|json\\)$" . js2-mode))
+(add-hook 'js2-mode-hook
+          #'(lambda ()
+              (setq js2-basic-offset 2
+                    indent-tabs-mode nil)
+              ))
 
 ;;--------------------
 ;; php-mode
@@ -333,7 +351,7 @@
   ""
   (let ((inhibit-read-only t))
     ad-do-it))
-;; (progn (ad-disable-advice 'grep-edit-change-file 'around 'inhibit-read-only) (ad-update 'grep-edit-change-file)) 
+;; (progn (ad-disable-advice 'grep-edit-change-file 'around 'inhibit-read-only) (ad-update 'grep-edit-change-file))
 
 (defun my-grep-edit-setup ()
   (define-key grep-mode-map '[up] nil)
@@ -350,17 +368,23 @@
 ;;-----------------------------------------------------------
 ;; w3m
 ;;-----------------------------------------------------------
-(require 'w3m-load)
-(setq w3m-command-arguments-alist
-      '(;; Don't use the proxy server to visit local web pages.
-        ("^http://\\(?:[^/]*\\.\\)*your-company\\.com\\(?:/\\|$\\)"
-         "-no-proxy")
-        ;; Use the proxy server to visit any foreign urls.
-        (""
-         "-o" "http_proxy=http://proxy.sso.ntts.co.jp:18080/")))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(jaspace-highlight-tab-face ((t (:foreground "red" :underline t)))))
+;; (require 'w3m-load)
+;; (setq w3m-command-arguments-alist
+;;       '(;; Don't use the proxy server to visit local web pages.
+;;         ("^http://\\(?:[^/]*\\.\\)*your-company\\.com\\(?:/\\|$\\)"
+;;          "-no-proxy")
+;;         ;; Use the proxy server to visit any foreign urls.
+;;         (""
+;;          "-o" "http_proxy=http://proxy.sso.ntts.co.jp:18080/")))
+;; (custom-set-faces
+;;  ;; custom-set-faces was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(default ((t (:family "Ubuntu Mono" :foundry "unknown" :slant normal :weight normal :height 113 :width normal))))
+;;  '(jaspace-highlight-tab-face ((t (:foreground "red" :underline t)))))
+
+;;-----------------------------------------------------------
+;; magit
+;;-----------------------------------------------------------
+(require 'magit)
