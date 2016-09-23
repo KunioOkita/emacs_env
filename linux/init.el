@@ -1,35 +1,15 @@
-;;-----------------------------------------------------------
-;; package.el
-;;-----------------------------------------------------------
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages") t)
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages") t)
-(package-initialize)
+;; package manager
+(require 'cask "~/.cask/cask.el")
+(cask-initialize)
 
-;;-----------------------------------------------------------
-;; load-path
-;;-----------------------------------------------------------
-;;(setq load-path (cons (expand-file-name "~/.emacs.d/elisp") load-path))
-(add-to-list 'load-path "~/.emacs.d/elisp")
-(add-to-list 'load-path "~/.emacs.d/elisp/html5-el")
-(add-to-list 'load-path "~/.emacs.d/elisp/yasnippet")
-(add-to-list 'load-path "~/.emacs.d/elisp/popup-el")
-(add-to-list 'load-path "~/.emacs.d/elisp/auto-complete")
-(add-to-list 'load-path "~/.emacs.d/elisp/emacs-w3m/share/emacs/site-lisp/w3m")
-
-(let ((default-directory (expand-file-name "~/.emacs.d/elpa")))
-  (add-to-list 'load-path default-directory)
-  (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
-      (normal-top-level-add-subdirs-to-load-path)))
 ;;-----------------------------------------------------------
 ;; System Settings
 ;;-----------------------------------------------------------
- (set-default-coding-systems 'utf-8)
- (prefer-coding-system 'utf-8)
- (set-terminal-coding-system 'utf-8)
- (set-file-name-coding-system 'utf-8)
- (setq default-process-coding-system '(utf-8 . utf-8))
+(set-default-coding-systems 'utf-8)
+(prefer-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-file-name-coding-system 'utf-8)
+(setq default-process-coding-system '(utf-8 . utf-8))
 ;; font
 (add-to-list 'default-frame-alist '(font . "ricty-10"))
 
@@ -45,7 +25,7 @@
 ;; メニューバーを非表示
 (menu-bar-mode -1)
 ;; スクロールバーを非表示
-(scroll-bar-mode 0)
+;;(scroll-bar-mode 0)
 
 
 ;; C-h backspace
@@ -64,45 +44,45 @@
 
 (defun scroll-speedup-setspeed ()
   (let* ((now (current-time))
-         (min (- (car now) (car scroll-speedup-zero)))
-         (sec (- (car (cdr now)) (car (cdr scroll-speedup-zero))))
-         (msec (/ (- (car (cdr (cdr now)))
-                     (car (cdr (cdr scroll-speedup-zero))))
-                  1000))
-         (lag (+ (* 60000 min) (* 1000 sec) msec)))
+   (min (- (car now) (car scroll-speedup-zero)))
+   (sec (- (car (cdr now)) (car (cdr scroll-speedup-zero))))
+   (msec (/ (- (car (cdr (cdr now)))
+         (car (cdr (cdr scroll-speedup-zero))))
+      1000))
+   (lag (+ (* 60000 min) (* 1000 sec) msec)))
     (if (> lag scroll-speedup-time)
-        (progn
-          (setq scroll-step-default 1)
-          (setq scroll-step-count 1))
+  (progn
+    (setq scroll-step-default 1)
+    (setq scroll-step-count 1))
       (setq scroll-step-count (+ 1 scroll-step-count)))
     (setq scroll-speedup-zero (current-time))))
 
 (defun scroll-speedup-next-line (arg)
   (if (= (% scroll-step-count scroll-speedup-count) 0)
       (setq scroll-step-default
-            (+ scroll-speedup-rate scroll-step-default)))
+      (+ scroll-speedup-rate scroll-step-default)))
   (if (string= arg 'next)
       (forward-line scroll-step-default)
     (forward-line (* -1 scroll-step-default))))
 
 (defadvice next-line
-  (around next-line-speedup activate)
+    (around next-line-speedup activate)
   (if (and (string= last-command 'next-line)
-           (interactive-p))
+     (interactive-p))
       (progn
-        (scroll-speedup-setspeed)
-        (scroll-speedup-next-line 'next))
+  (scroll-speedup-setspeed)
+  (scroll-speedup-next-line 'next))
     (setq scroll-step-default 1)
     (setq scroll-step-count 1)
     ad-do-it))
 
 (defadvice previous-line
-  (around previous-line-speedup activate)
+    (around previous-line-speedup activate)
   (if (and (string= last-command 'previous-line)
-           (interactive-p))
+     (interactive-p))
       (progn
-        (scroll-speedup-setspeed)
-        (scroll-speedup-next-line 'previous))
+  (scroll-speedup-setspeed)
+  (scroll-speedup-next-line 'previous))
     (setq scroll-step-default 1)
     (setq scroll-step-count 1)
     ad-do-it))
@@ -111,29 +91,29 @@
 ;;--------------------
 ;; subversion
 ;;--------------------
-(require 'psvn)
-(setq process-coding-system-alist '(("svn" . utf-8)))
-(setq default-file-name-coding-system 'utf-8)
-(setq svn-status-svn-file-coding-system 'utf-8)
+;; (require 'psvn)
+;; (setq process-coding-system-alist '(("svn" . utf-8)))
+;; (setq default-file-name-coding-system 'utf-8)
+;; (setq svn-status-svn-file-coding-system 'utf-8)
 
-(autoload 'svn-status "psvn" nil t)
-(add-hook 'svn-pre-parse-status-hook 'svn-status-parse-fixup-externals-full-path)
+;; (autoload 'svn-status "psvn" nil t)
+;; (add-hook 'svn-pre-parse-status-hook 'svn-status-parse-fixup-externals-full-path)
 
-(defun svn-status-parse-fixup-externals-full-path ()
-  "SubVersion 1.17 adds the full path to externals; 
-  this pre-parse hook fixes it up to look like pre-1.17.
-  Allowing psvn to continue as normal"
-  (goto-char (point-min))
-  (let (( search-string  (file-truename default-directory) ))
-    (save-match-data
-      (save-excursion
-    (while (re-search-forward search-string (point-max) t)
-      (replace-match "" nil nil)
-      )))))
-(define-key global-map
-  "\C-xvn" 'svn-status)
-(define-key global-map
-  "\C-xvk" 'svn-update)
+;; (defun svn-status-parse-fixup-externals-full-path ()
+;;     "SubVersion 1.17 adds the full path to externals; 
+;;   this pre-parse hook fixes it up to look like pre-1.17.
+;;   Allowing psvn to continue as normal"
+;;     (goto-char (point-min))
+;;     (let (( search-string  (file-truename default-directory) ))
+;;       (save-match-data
+;;   (save-excursion
+;;     (while (re-search-forward search-string (point-max) t)
+;;       (replace-match "" nil nil)
+;;       )))))
+;; (define-key global-map
+;;   "\C-xvn" 'svn-status)
+;; (define-key global-map
+;;   "\C-xvk" 'svn-update)
 
 ;;--------------------
 ;; その他色々設定
@@ -151,8 +131,8 @@
   "Go to the matching paren if on a paren; otherwise insert %."
   (interactive "p")
   (cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
-        ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
-        (t (self-insert-command (or arg 1)))))
+  ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
+  (t (self-insert-command (or arg 1)))))
 
 ;; added underline
 (global-set-key [f9] 'global-hl-line-mode)
@@ -186,54 +166,54 @@
 (when (require 'jaspace nil t)
   (when (boundp 'jaspace-modes)
     (setq jaspace-modes (append jaspace-modes
-                                (list 'php-mode
-                                      'yaml-mode
-                                      'javascript-mode
-                                      'ruby-mode
-                                      'text-mode
-                                      'c-mode
-                                      'nxml-mode
-                                      'web-mode
-                                      'js2-mode
-                                      'c++-mode
-                                      'fundamental-mode))))
+        (list 'php-mode
+              'yaml-mode
+              'javascript-mode
+              'ruby-mode
+              'text-mode
+              'c-mode
+              'nxml-mode
+              'web-mode
+              'js2-mode
+              'c++-mode
+              'fundamental-mode))))
   (when (boundp 'jaspace-alternate-jaspace-string)
     (setq jaspace-alternate-jaspace-string "□"))
   (when (boundp 'jaspace-highlight-tabs)
     (setq jaspace-highlight-tabs ?^))
   (add-hook 'jaspace-mode-off-hook
-            (lambda()
-              (when (boundp 'show-trailing-whitespace)
-                (setq show-trailing-whitespace nil))))
+      (lambda()
+        (when (boundp 'show-trailing-whitespace)
+    (setq show-trailing-whitespace nil))))
   (add-hook 'jaspace-mode-hook
-            (lambda()
-              (progn
-                (when (boundp 'show-trailing-whitespace)
-                  (setq show-trailing-whitespace t))
-                (face-spec-set 'jaspace-highlight-jaspace-face
-                               '((((class color) (background light))
-                                  (:foreground "blue"))
-                                 (t (:foreground "green"))))
-                (face-spec-set 'jaspace-highlight-tab-face
-                               '((((class color) (background light))
-                                  (:foreground "red"
-                                   :background "unspecified"
-                                   :strike-through nil
-                                   :underline t))
-                                 (t (:foreground "purple"
-                                     :background "unspecified"
-                                     :strike-through nil
-                                     :underline t))))
-                (face-spec-set 'trailing-whitespace
-                               '((((class color) (background light))
-                                  (:foreground "red"
-                                   :background "unspecified"
-                                   :strike-through nil
-                                   :underline t))
-                                 (t (:foreground "purple"
-                                     :background "unspecified"
-                                     :strike-through nil
-                                     :underline t))))))))
+      (lambda()
+        (progn
+    (when (boundp 'show-trailing-whitespace)
+      (setq show-trailing-whitespace t))
+    (face-spec-set 'jaspace-highlight-jaspace-face
+             '((((class color) (background light))
+          (:foreground "blue"))
+         (t (:foreground "green"))))
+    (face-spec-set 'jaspace-highlight-tab-face
+             '((((class color) (background light))
+          (:foreground "red"
+                 :background "unspecified"
+                 :strike-through nil
+                 :underline t))
+         (t (:foreground "purple"
+             :background "unspecified"
+             :strike-through nil
+             :underline t))))
+    (face-spec-set 'trailing-whitespace
+             '((((class color) (background light))
+          (:foreground "red"
+                 :background "unspecified"
+                 :strike-through nil
+                 :underline t))
+         (t (:foreground "purple"
+             :background "unspecified"
+             :strike-through nil
+             :underline t))))))))
 
 ;;--------------------
 ;; HTML5対応
@@ -282,23 +262,28 @@
 ;;--------------------
 ;; anything setting
 ;;--------------------
-(when (require 'anything-startup nil t)
-  (global-set-key (kbd "\C-x b") 'anything)
-  )
+;; (when (require 'anything-startup nil t)
+;;   (global-set-key (kbd "\C-x b") 'anything)
+;;   )
 
 ;;--------------------
 ;; YASnippet
 ;;--------------------
-(when (require 'yasnippet nil t)
-  (yas--initialize)
-  (setq yas-snippet-dirs
-    '("~/.emacs.d/snippets" ;; 作成するスニペットはここに入る
-      "~/.emacs.d/elisp/yasnippet/snippets" ;; 最初から入っていたスニペット(省略可能)
-      ))
-  ;;  (yas/load-directory "~/.emacs.d/elisp/yasnippet/snippets")
-  ;;  (yas/load-directory "~/.emacs.d/elisp/yasnippet/extras/imported")
-  (yas/global-mode 1)
-  )
+(add-to-list 'load-path
+             "~/.emacs.d/.cask/24.5/elpa/yasnippet-20160801.1142")
+(require 'yasnippet)
+(yas-global-mode 1)
+
+;; (when (require 'yasnippet nil t)
+;;   (yas--initialize)
+;;   (setq yas-snippet-dirs
+;;   ;;  '("~/.emacs.d/snippets" ;; 作成するスニペットはここに入る
+;;   ;;  "~/.emacs.d/.cask/24.5/elpa/yasnippet-20160801.1142/snippets" ;; 最初から入っていたスニペット(省略可能)
+;;     )
+;;   ;;  (yas/load-directory "~/.emacs.d/elisp/yasnippet/snippets")
+;;   ;;  (yas/load-directory "~/.emacs.d/elisp/yasnippet/extras/imported")
+;;   (yas/global-mode 1)
+;;   )
 
 ;; 既存スニペットを挿入する
 (define-key yas-minor-mode-map (kbd "C-x i i") 'yas-insert-snippet)
@@ -328,10 +313,10 @@
 (autoload 'js2-mode "js2-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.\\(js\\|json\\)$" . js2-mode))
 (add-hook 'js2-mode-hook
-          #'(lambda ()
-              (setq js2-basic-offset 2
-                    indent-tabs-mode nil)
-              ))
+    #'(lambda ()
+        (setq js2-basic-offset 2
+        indent-tabs-mode nil)
+        ))
 
 ;;--------------------
 ;; php-mode
@@ -341,50 +326,31 @@
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
 
-;;--------------------
-;; grep-edit
-;;--------------------
-(require 'grep)
-(require 'grep-edit)
-
-(defadvice grep-edit-change-file (around inhibit-read-only activate)
-  ""
-  (let ((inhibit-read-only t))
-    ad-do-it))
-;; (progn (ad-disable-advice 'grep-edit-change-file 'around 'inhibit-read-only) (ad-update 'grep-edit-change-file))
-
-(defun my-grep-edit-setup ()
-  (define-key grep-mode-map '[up] nil)
-  (define-key grep-mode-map "\C-c\C-c" 'grep-edit-finish-edit)
-  (message (substitute-command-keys "\\[grep-edit-finish-edit] to apply changes."))
-  (set (make-local-variable 'inhibit-read-only) t)
-  )
-(add-hook 'grep-setup-hook 'my-grep-edit-setup t)
-
-;; jslint
-;;(require 'flymake-jslint) ;; Not necessary if using ELPA package
-;;(add-hook 'js-mode-hook 'flymake-jslint-load)
-
-;;-----------------------------------------------------------
-;; w3m
-;;-----------------------------------------------------------
-;; (require 'w3m-load)
-;; (setq w3m-command-arguments-alist
-;;       '(;; Don't use the proxy server to visit local web pages.
-;;         ("^http://\\(?:[^/]*\\.\\)*your-company\\.com\\(?:/\\|$\\)"
-;;          "-no-proxy")
-;;         ;; Use the proxy server to visit any foreign urls.
-;;         (""
-;;          "-o" "http_proxy=http://proxy.sso.ntts.co.jp:18080/")))
-;; (custom-set-faces
-;;  ;; custom-set-faces was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(default ((t (:family "Ubuntu Mono" :foundry "unknown" :slant normal :weight normal :height 113 :width normal))))
-;;  '(jaspace-highlight-tab-face ((t (:foreground "red" :underline t)))))
-
 ;;-----------------------------------------------------------
 ;; magit
 ;;-----------------------------------------------------------
 (require 'magit)
+
+;;-----------------------------------------------------------
+;; tern-mode(for javascript)
+;;-----------------------------------------------------------
+(autoload 'js2-mode "js2-mode" nil t)
+(add-to-list 'auto-mode-alist '("\.js$" . js2-mode))
+(add-hook 'js2-mode-hook
+          (lambda ()
+            (tern-mode t)))
+
+(eval-after-load 'tern
+  '(progn
+     (require 'tern-auto-complete)
+           (tern-ac-setup)))
+
+;;-----------------------------------------------------------
+;; helm
+;;-----------------------------------------------------------
+(require 'helm-config)
+(helm-mode 1)
+
+;; C-hで前の文字削除
+(define-key helm-map (kbd "C-h") 'delete-backward-char)
+(define-key helm-find-files-map (kbd "C-h") 'delete-backward-char)
