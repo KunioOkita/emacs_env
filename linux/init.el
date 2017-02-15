@@ -68,7 +68,7 @@
 (defadvice next-line
     (around next-line-speedup activate)
   (if (and (string= last-command 'next-line)
-     (interactive-p))
+     (interactively-p))
       (progn
   (scroll-speedup-setspeed)
   (scroll-speedup-next-line 'next))
@@ -79,7 +79,7 @@
 (defadvice previous-line
     (around previous-line-speedup activate)
   (if (and (string= last-command 'previous-line)
-     (interactive-p))
+     (interactively-p))
       (progn
   (scroll-speedup-setspeed)
   (scroll-speedup-next-line 'previous))
