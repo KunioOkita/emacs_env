@@ -33,5 +33,4 @@
 (depends-on "ag")
 (depends-on "wgrep-ag")
 (depends-on "helm")
-(depends-on "psvn")
 (depends-on "flycheck")

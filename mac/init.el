@@ -1,11 +1,3 @@
-;; package manager
-
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
-(package-initialize)
-
 (require 'cask "~/.cask/cask.el")
 (cask-initialize)
 
@@ -17,8 +9,10 @@
 (set-terminal-coding-system 'utf-8)
 (set-file-name-coding-system 'utf-8)
 (setq default-process-coding-system '(utf-8 . utf-8))
-;; font
-(add-to-list 'default-frame-alist '(font . "ricty-10"))
+
+;; CommandとOptionを入れ替える
+(setq ns-command-modifier (quote meta))
+(setq ns-alternate-modifier (quote super))
 
 ;;-----------------------------------------------------------
 ;; My Settings
@@ -93,34 +87,6 @@
     (setq scroll-step-default 1)
     (setq scroll-step-count 1)
     ad-do-it))
-
-
-;;--------------------
-;; subversion
-;;--------------------
-(require 'psvn)
-(setq process-coding-system-alist '(("svn" . utf-8)))
-(setq default-file-name-coding-system 'utf-8)
-(setq svn-status-svn-file-coding-system 'utf-8)
-
-(autoload 'svn-status "psvn" nil t)
-(add-hook 'svn-pre-parse-status-hook 'svn-status-parse-fixup-externals-full-path)
-
-(defun svn-status-parse-fixup-externals-full-path ()
-    "SubVersion 1.17 adds the full path to externals; 
-  this pre-parse hook fixes it up to look like pre-1.17.
-  Allowing psvn to continue as normal"
-    (goto-char (point-min))
-    (let (( search-string  (file-truename default-directory) ))
-      (save-match-data
-  (save-excursion
-    (while (re-search-forward search-string (point-max) t)
-      (replace-match "" nil nil)
-      )))))
-(define-key global-map
-  "\C-xvn" 'svn-status)
-(define-key global-map
-  "\C-xvk" 'svn-update)
 
 ;;--------------------
 ;; その他色々設定
@@ -281,17 +247,6 @@
 (require 'yasnippet)
 (yas-global-mode 1)
 
-;; (when (require 'yasnippet nil t)
-;;   (yas--initialize)
-;;   (setq yas-snippet-dirs
-;;   ;;  '("~/.emacs.d/snippets" ;; 作成するスニペットはここに入る
-;;   ;;  "~/.emacs.d/.cask/24.5/elpa/yasnippet-20160801.1142/snippets" ;; 最初から入っていたスニペット(省略可能)
-;;     )
-;;   ;;  (yas/load-directory "~/.emacs.d/elisp/yasnippet/snippets")
-;;   ;;  (yas/load-directory "~/.emacs.d/elisp/yasnippet/extras/imported")
-;;   (yas/global-mode 1)
-;;   )
-
 ;; 既存スニペットを挿入する
 (define-key yas-minor-mode-map (kbd "C-x i i") 'yas-insert-snippet)
 ;; 新規スニペットを作成するバッファを用意する
@@ -361,12 +316,6 @@
 ;; C-hで前の文字削除
 (define-key helm-map (kbd "C-h") 'delete-backward-char)
 (define-key helm-find-files-map (kbd "C-h") 'delete-backward-char)
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "Ubuntu Mono" :foundry "DAMA" :slant normal :weight normal :height 98 :width normal)))))
 
 ;; flycheck
 (require 'flycheck)
