@@ -14,6 +14,9 @@
 (setq ns-command-modifier (quote meta))
 (setq ns-alternate-modifier (quote super))
 
+;; shell環境を引き継ぐ
+(exec-path-from-shell-initialize)
+
 ;;-----------------------------------------------------------
 ;; My Settings
 ;;-----------------------------------------------------------
@@ -205,12 +208,9 @@
 
 (defun web-mode-hook ()
   "Hooks for Web mode."
-  (setq web-mode-html-offset   2)
-  (setq web-mode-css-offset    2)
-  (setq web-mode-script-offset 2)
-  (setq web-mode-php-offset    2)
-  (setq web-mode-java-offset   2)
-  (setq web-mode-asp-offset    2))
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset    2)
+  (setq web-mode-code-indent-offset   2))
 (add-hook 'web-mode-hook 'web-mode-hook)
 
 ;;--------------------
@@ -242,8 +242,6 @@
 ;;--------------------
 ;; YASnippet
 ;;--------------------
-(add-to-list 'load-path
-             "~/.emacs.d/.cask/24.5/elpa/yasnippet-20160801.1142")
 (require 'yasnippet)
 (yas-global-mode 1)
 
