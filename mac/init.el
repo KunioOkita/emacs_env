@@ -1,4 +1,4 @@
-(require 'cask "~/.cask/cask.el")
+(require 'cask "/usr/local/Cellar/cask/0.8.4/cask.el")
 (cask-initialize)
 
 ;;-----------------------------------------------------------
@@ -26,7 +26,7 @@
 ;; メニューバーを非表示
 (menu-bar-mode -1)
 ;; スクロールバーを非表示
-(scroll-bar-mode 0)
+;;(scroll-bar-mode 0)
 
 
 ;; C-h backspace
