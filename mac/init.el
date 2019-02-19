@@ -130,6 +130,10 @@
  '(column-number-mode t)
  '(diff-switches "-u")
  '(display-time-mode t)
+ '(flycheck-disabled-checkers (quote (javascript-jshint javascript-jscs)))
+ '(package-selected-packages
+   (quote
+    (yasnippet wgrep-ag web-mode use-package tern-auto-complete smex smartparens projectile prodigy popwin pallet nyan-mode multiple-cursors magit js2-mode idle-highlight-mode htmlize helm flycheck-cask expand-region exec-path-from-shell drag-stuff ag)))
  '(show-paren-mode t))
 
 ;;バックアップファイル作成
@@ -322,3 +326,37 @@
 (eval-after-load 'flycheck
   '(custom-set-variables
     '(flycheck-disabled-checkers '(javascript-jshint javascript-jscs))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+
+;;-----------------------------------------------------------
+;; eww
+;;-----------------------------------------------------------
+;; google search
+(setq eww-search-prefix "https://www.google.co.jp/search?q=")
+(defun eww-disable-images ()
+  "ewwで画像表示させない"
+  (interactive)
+  (setq-local shr-put-image-function 'shr-put-image-alt)
+  (eww-reload))
+(defun eww-enable-images ()
+  "ewwで画像表示させる"
+  (interactive)
+  (setq-local shr-put-image-function 'shr-put-image)
+  (eww-reload))
+(defun shr-put-image-alt (spec alt &optional flags)
+  (insert alt))
+(defun eww-mode-hook--disable-image ()
+  (setq-local shr-put-image-function 'shr-put-image-alt))
+(add-hook 'eww-mode-hook 'eww-mode-hook--disable-image)
+
+;;-----------------------------------------------------------
+;; markdown
+;;-----------------------------------------------------------
+;;(autoload 'markdown-preview-mode "markdown-preview-mode.el" t)
+;;(setq markdown-preview-stylesheets (list "github.css"))

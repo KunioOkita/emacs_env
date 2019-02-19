@@ -35,3 +35,11 @@
 (depends-on "helm")
 (depends-on "flycheck")
 (depends-on "exec-path-from-shell")
+(depends-on "csharp-mode")
+(depends-on "markdown-mode")
+(depends-on "markdown-preview-mode")
+(depends-on "websocket")
+(depends-on "web-server")
+(depends-on "uuidgen")
+
+
