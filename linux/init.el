@@ -98,29 +98,29 @@
 ;;--------------------
 ;; subversion
 ;;--------------------
-(require 'psvn)
-(setq process-coding-system-alist '(("svn" . utf-8)))
-(setq default-file-name-coding-system 'utf-8)
-(setq svn-status-svn-file-coding-system 'utf-8)
+;;(require 'psvn)
+;;(setq process-coding-system-alist '(("svn" . utf-8)))
+;;(setq default-file-name-coding-system 'utf-8)
+;;(setq svn-status-svn-file-coding-system 'utf-8)
 
-(autoload 'svn-status "psvn" nil t)
-(add-hook 'svn-pre-parse-status-hook 'svn-status-parse-fixup-externals-full-path)
+;;(autoload 'svn-status "psvn" nil t)
+;;(add-hook 'svn-pre-parse-status-hook 'svn-status-parse-fixup-externals-full-path)
 
-(defun svn-status-parse-fixup-externals-full-path ()
-    "SubVersion 1.17 adds the full path to externals; 
-  this pre-parse hook fixes it up to look like pre-1.17.
-  Allowing psvn to continue as normal"
-    (goto-char (point-min))
-    (let (( search-string  (file-truename default-directory) ))
-      (save-match-data
-  (save-excursion
-    (while (re-search-forward search-string (point-max) t)
-      (replace-match "" nil nil)
-      )))))
-(define-key global-map
-  "\C-xvn" 'svn-status)
-(define-key global-map
-  "\C-xvk" 'svn-update)
+;;(defun svn-status-parse-fixup-externals-full-path ()
+;;    "SubVersion 1.17 adds the full path to externals; 
+;;  this pre-parse hook fixes it up to look like pre-1.17.
+;;  Allowing psvn to continue as normal"
+;;    (goto-char (point-min))
+;;    (let (( search-string  (file-truename default-directory) ))
+;;      (save-match-data
+;;  (save-excursion
+;;    (while (re-search-forward search-string (point-max) t)
+;;      (replace-match "" nil nil)
+;;      )))))
+;;(define-key global-map
+;;  "\C-xvn" 'svn-status)
+;;(define-key global-map
+;;  "\C-xvk" 'svn-update)
 
 ;;--------------------
 ;; その他色々設定
