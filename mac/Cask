@@ -41,5 +41,10 @@
 (depends-on "websocket")
 (depends-on "web-server")
 (depends-on "uuidgen")
-
-
+(depends-on "solarized-theme")
+(depends-on "yaml-mode")
+(depends-on "neotree")
+(depends-on "all-the-icons")
+(depends-on "flycheck-plantuml")
+(depends-on "plantuml-mode")
+(depends-on "smooth-scrolling")
